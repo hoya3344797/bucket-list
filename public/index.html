@@ -1,43 +1,510 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹 보안 테스트 실습 환경</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #856404;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .lab-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .lab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .lab-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .lab-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        .vulnerability {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .logs {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tab-container {
+            margin-top: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f1f3f4;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f1f3f4;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: none;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            background: white;
+            padding: 25px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 웹 보안 테스트 실습 환경</h1>
+            <p>안전한 환경에서 웹 애플리케이션 보안 취약점을 학습하고 테스트해보세요</p>
+        </div>
+
+        <div class="warning">
+            ⚠️ <strong>교육용 목적:</strong> 이 환경은 보안 학습을 위한 것입니다. 실제 서비스에는 적용하지 마세요.
+        </div>
+
+        <div class="lab-grid">
+            <!-- SQL Injection Lab -->
+            <div class="lab-card">
+                <h3>🗃️ SQL Injection 테스트</h3>
+                <p>SQL 인젝션 취약점을 시뮬레이션하고 방어 기법을 학습합니다.</p>
+                
+                <div class="input-group">
+                    <label>사용자 ID:</label>
+                    <input type="text" id="sqlUserId" placeholder="admin' OR '1'='1">
+                </div>
+                
+                <div class="input-group">
+                    <label>비밀번호:</label>
+                    <input type="password" id="sqlPassword" placeholder="' OR '1'='1">
+                </div>
+                
+                <button class="btn" onclick="testSQLInjection()">로그인 테스트</button>
+                <div id="sqlResult" class="result"></div>
+            </div>
+
+            <!-- XSS Lab -->
+            <div class="lab-card">
+                <h3>🔗 XSS (Cross-Site Scripting) 테스트</h3>
+                <p>XSS 공격을 시뮬레이션하고 방어 방법을 학습합니다.</p>
+                
+                <div class="input-group">
+                    <label>댓글 입력:</label>
+                    <textarea id="xssInput" rows="3" placeholder="<script>alert('XSS 테스트')</script>"></textarea>
+                </div>
+                
+                <button class="btn" onclick="testXSS()">댓글 등록</button>
+                <div id="xssResult" class="result"></div>
+                <div id="xssOutput" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;"></div>
+            </div>
+
+            <!-- CSRF Lab -->
+            <div class="lab-card">
+                <h3>🔄 CSRF 테스트</h3>
+                <p>Cross-Site Request Forgery 공격을 시뮬레이션합니다.</p>
+                
+                <div class="input-group">
+                    <label>이체 금액:</label>
+                    <input type="number" id="transferAmount" placeholder="1000000">
+                </div>
+                
+                <div class="input-group">
+                    <label>받는 계좌:</label>
+                    <input type="text" id="transferAccount" placeholder="해커계좌-123">
+                </div>
+                
+                <button class="btn" onclick="testCSRF()">이체 실행 (위험!)</button>
+                <div id="csrfResult" class="result"></div>
+            </div>
+
+            <!-- Input Validation Lab -->
+            <div class="lab-card">
+                <h3>✅ 입력 검증 테스트</h3>
+                <p>다양한 입력 검증 우회 기법을 테스트합니다.</p>
+                
+                <div class="input-group">
+                    <label>파일 업로드:</label>
+                    <input type="text" id="fileName" placeholder="shell.php.jpg">
+                </div>
+                
+                <div class="input-group">
+                    <label>이메일:</label>
+                    <input type="text" id="emailInput" placeholder="test@example.com<script>">
+                </div>
+                
+                <button class="btn" onclick="testValidation()">검증 테스트</button>
+                <div id="validationResult" class="result"></div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('logs')">보안 로그</button>
+                <button class="tab" onclick="switchTab('tips')">방어 기법</button>
+                <button class="tab" onclick="switchTab('tools')">보안 도구</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="logs-pane">
+                    <div class="logs" id="securityLogs">
+                        [시작] 보안 테스트 환경이 초기화되었습니다...<br>
+                        [정보] 모든 테스트는 시뮬레이션이며 실제 데이터에 영향을 주지 않습니다.<br>
+                        [준비] 테스트를 시작하세요!<br>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="tips-pane">
+                    <h3>🛡️ 주요 방어 기법</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><strong>SQL Injection:</strong> 매개변수화된 쿼리, 입력 검증, ORM 사용</li>
+                        <li><strong>XSS:</strong> 출력 인코딩, CSP 헤더, 입력 필터링</li>
+                        <li><strong>CSRF:</strong> CSRF 토큰, SameSite 쿠키, Referer 검증</li>
+                        <li><strong>입력 검증:</strong> 화이트리스트 방식, 정규식 검증, 파일 타입 검사</li>
+                    </ul>
+                </div>
+                
+                <div class="tab-pane" id="tools-pane">
+                    <h3>🔧 추천 보안 도구</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><strong>OWASP ZAP:</strong> 웹 애플리케이션 보안 스캐너</li>
+                        <li><strong>Burp Suite:</strong> 웹 보안 테스트 플랫폼</li>
+                        <li><strong>Nmap:</strong> 네트워크 탐지 및 보안 감사</li>
+                        <li><strong>Wireshark:</strong> 네트워크 프로토콜 분석기</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logCount = 0;
+
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('securityLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] [${type.toUpperCase()}] ${message}<br>`;
+            logs.innerHTML += logEntry;
+            logs.scrollTop = logs.scrollHeight;
+            logCount++;
+        }
+
+        function testSQLInjection() {
+            const userId = document.getElementById('sqlUserId').value;
+            const password = document.getElementById('sqlPassword').value;
+            const result = document.getElementById('sqlResult');
+            
+            addLog(`SQL 인젝션 테스트 시도: ${userId}`, 'test');
+            
+            // 시뮬레이션된 SQL 인젝션 검사
+            const sqlPatterns = [
+                /'/gi, /or\s+/gi, /union\s+/gi, /select\s+/gi, 
+                /drop\s+/gi, /insert\s+/gi, /update\s+/gi, /delete\s+/gi
+            ];
+            
+            let isVulnerable = false;
+            let detectedPatterns = [];
+            
+            const fullInput = userId + ' ' + password;
+            sqlPatterns.forEach((pattern, index) => {
+                if (pattern.test(fullInput)) {
+                    isVulnerable = true;
+                    detectedPatterns.push(['Single Quote', 'OR Statement', 'UNION Attack', 'SELECT Query', 'DROP Command', 'INSERT Command', 'UPDATE Command', 'DELETE Command'][index]);
+                }
+            });
+            
+            result.style.display = 'block';
+            if (isVulnerable) {
+                result.className = 'result vulnerability';
+                result.innerHTML = `
+                    <strong>⚠️ SQL 인젝션 취약점 발견!</strong><br>
+                    감지된 패턴: ${detectedPatterns.join(', ')}<br>
+                    <em>실제 환경에서는 데이터베이스가 손상될 수 있습니다.</em>
+                `;
+                addLog(`SQL 인젝션 취약점 감지: ${detectedPatterns.join(', ')}`, 'vulnerability');
+            } else {
+                result.className = 'result';
+                result.innerHTML = `
+                    <strong>✅ 안전한 입력</strong><br>
+                    SQL 인젝션 패턴이 감지되지 않았습니다.
+                `;
+                addLog('SQL 인젝션 테스트 통과', 'safe');
+            }
+        }
+
+        function testXSS() {
+            const input = document.getElementById('xssInput').value;
+            const result = document.getElementById('xssResult');
+            const output = document.getElementById('xssOutput');
+            
+            addLog(`XSS 테스트 시도: ${input.substring(0, 50)}...`, 'test');
+            
+            // XSS 패턴 검사
+            const xssPatterns = [
+                /<script/gi, /<iframe/gi, /javascript:/gi, /onload=/gi,
+                /onerror=/gi, /onclick=/gi, /onmouseover=/gi, /<img/gi
+            ];
+            
+            let isXSS = false;
+            let detectedPatterns = [];
+            
+            xssPatterns.forEach((pattern, index) => {
+                if (pattern.test(input)) {
+                    isXSS = true;
+                    detectedPatterns.push(['Script Tag', 'IFrame', 'JavaScript Protocol', 'OnLoad Event', 'OnError Event', 'OnClick Event', 'OnMouseOver Event', 'Image Tag'][index]);
+                }
+            });
+            
+            result.style.display = 'block';
+            if (isXSS) {
+                result.className = 'result vulnerability';
+                result.innerHTML = `
+                    <strong>⚠️ XSS 공격 패턴 발견!</strong><br>
+                    감지된 패턴: ${detectedPatterns.join(', ')}<br>
+                    <em>실제 환경에서는 사용자 세션이 탈취될 수 있습니다.</em>
+                `;
+                addLog(`XSS 취약점 감지: ${detectedPatterns.join(', ')}`, 'vulnerability');
+                
+                // 안전하게 HTML 인코딩하여 표시
+                output.innerHTML = `<strong>입력된 내용 (HTML 인코딩됨):</strong><br><code>${input.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`;
+            } else {
+                result.className = 'result';
+                result.innerHTML = `
+                    <strong>✅ 안전한 입력</strong><br>
+                    XSS 공격 패턴이 감지되지 않았습니다.
+                `;
+                addLog('XSS 테스트 통과', 'safe');
+                output.innerHTML = `<strong>등록된 댓글:</strong><br>${input}`;
+            }
+        }
+
+        function testCSRF() {
+            const amount = document.getElementById('transferAmount').value;
+            const account = document.getElementById('transferAccount').value;
+            const result = document.getElementById('csrfResult');
+            
+            addLog(`CSRF 테스트: ${amount}원을 ${account}로 이체 시도`, 'test');
+            
+            // CSRF 토큰 검사 시뮬레이션
+            const hasCSRFToken = Math.random() > 0.7; // 30% 확률로 CSRF 토큰 존재
+            
+            result.style.display = 'block';
+            if (!hasCSRFToken) {
+                result.className = 'result vulnerability';
+                result.innerHTML = `
+                    <strong>⚠️ CSRF 공격 성공!</strong><br>
+                    CSRF 토큰이 없어 악의적인 요청이 실행되었습니다.<br>
+                    <em>${amount}원이 ${account}로 이체되었습니다! (시뮬레이션)</em>
+                `;
+                addLog(`CSRF 취약점 - 무단 이체 실행: ${amount}원`, 'vulnerability');
+            } else {
+                result.className = 'result';
+                result.innerHTML = `
+                    <strong>✅ CSRF 방어 성공</strong><br>
+                    CSRF 토큰 검증으로 악의적인 요청이 차단되었습니다.
+                `;
+                addLog('CSRF 방어 성공 - 토큰 검증 통과', 'safe');
+            }
+        }
+
+        function testValidation() {
+            const fileName = document.getElementById('fileName').value;
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('validationResult');
+            
+            addLog(`입력 검증 테스트: 파일명=${fileName}, 이메일=${email}`, 'test');
+            
+            let issues = [];
+            
+            // 파일 확장자 우회 검사
+            if (fileName.includes('.php') || fileName.includes('.jsp') || fileName.includes('.asp')) {
+                issues.push('위험한 파일 확장자 감지');
+            }
+            
+            if (fileName.includes('..') || fileName.includes('/')) {
+                issues.push('경로 조작 시도 감지');
+            }
+            
+            // 이메일 XSS 검사
+            if (email.includes('<') || email.includes('>') || email.includes('script')) {
+                issues.push('이메일 필드에서 XSS 패턴 감지');
+            }
+            
+            result.style.display = 'block';
+            if (issues.length > 0) {
+                result.className = 'result vulnerability';
+                result.innerHTML = `
+                    <strong>⚠️ 입력 검증 취약점 발견!</strong><br>
+                    ${issues.map(issue => `• ${issue}`).join('<br>')}<br>
+                    <em>적절한 입력 검증이 필요합니다.</em>
+                `;
+                addLog(`입력 검증 실패: ${issues.join(', ')}`, 'vulnerability');
+            } else {
+                result.className = 'result';
+                result.innerHTML = `
+                    <strong>✅ 입력 검증 통과</strong><br>
+                    모든 입력이 안전합니다.
+                `;
+                addLog('입력 검증 통과', 'safe');
+            }
+        }
+
+        function switchTab(tabName) {
+            // 모든 탭과 내용 숨기기
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-pane').classList.add('active');
+        }
+
+        // 초기화 시 환영 메시지
+        setTimeout(() => {
+            addLog('보안 테스트 환경 준비 완료!', 'info');
+            addLog('각 테스트를 통해 웹 애플리케이션 보안을 학습하세요', 'info');
+        }, 1000);
+    </script>
+</body>
 </html>
