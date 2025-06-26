@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>웹 보안 테스트 실습 환경</title>
+    <title>ModernBlog</title>
     <style>
         * {
             margin: 0;
@@ -12,499 +12,867 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fef7ed 0%, #f5f4f1 100%);
+            color: #374151;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #333;
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            background-clip: text;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #d97706, #78716c);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            cursor: pointer;
         }
 
-        .warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #856404;
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .lab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
+        .search-box {
+            position: relative;
         }
 
-        .lab-card {
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 2rem;
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-left: 5px solid #667eea;
+            width: 250px;
+            transition: all 0.3s ease;
         }
 
-        .lab-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .lab-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .lab-card p {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-group input:focus, .input-group textarea:focus {
+        .search-box input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
         }
 
         .btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+            padding: 0.5rem 1.5rem;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            border-radius: 2rem;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: transform 0.2s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .btn:hover {
+        .btn-primary {
+            background: #d97706;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b45309;
             transform: translateY(-2px);
         }
 
-        .result {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+        }
+
+        .btn-ghost:hover {
+            background: #f3f4f6;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #fbbf24, #d97706);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .posts-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .post-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .post-category {
+            padding: 0.25rem 0.75rem;
+            background: #fef3c7;
+            color: #d97706;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .post-title:hover {
+            color: #d97706;
+        }
+
+        .post-content {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .stat-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .stat-btn.liked {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .comments-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .comment {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .comment-input input:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .vulnerability {
-            background: #f8d7da;
-            border-left-color: #dc3545;
+        .modal.active {
+            display: flex;
         }
 
-        .logs {
-            background: #1e1e1e;
-            color: #00ff00;
-            padding: 20px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            margin-top: 30px;
-            max-height: 300px;
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        .tab-container {
-            margin-top: 30px;
-        }
-
-        .tabs {
+        .modal-header {
             display: flex;
-            background: #f1f3f4;
-            border-radius: 10px 10px 0 0;
-            overflow: hidden;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            background: #f1f3f4;
-            cursor: pointer;
-            transition: background 0.3s ease;
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
             border: none;
-            font-weight: 600;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
         }
 
-        .tab.active {
-            background: white;
-            color: #667eea;
+        .form-group {
+            margin-bottom: 1rem;
         }
 
-        .tab-content {
-            background: white;
-            padding: 25px;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
         }
 
-        .tab-pane {
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: #d97706;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 0;
+            color: #6b7280;
+        }
+
+        .mobile-menu {
             display: none;
         }
 
-        .tab-pane.active {
-            display: block;
+        @media (max-width: 768px) {
+            .nav-right {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔒 웹 보안 테스트 실습 환경</h1>
-            <p>안전한 환경에서 웹 애플리케이션 보안 취약점을 학습하고 테스트해보세요</p>
-        </div>
-
-        <div class="warning">
-            ⚠️ <strong>교육용 목적:</strong> 이 환경은 보안 학습을 위한 것입니다. 실제 서비스에는 적용하지 마세요.
-        </div>
-
-        <div class="lab-grid">
-            <!-- SQL Injection Lab -->
-            <div class="lab-card">
-                <h3>🗃️ SQL Injection 테스트</h3>
-                <p>SQL 인젝션 취약점을 시뮬레이션하고 방어 기법을 학습합니다.</p>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="showHome()">ModernBlog</div>
                 
-                <div class="input-group">
-                    <label>사용자 ID:</label>
-                    <input type="text" id="sqlUserId" placeholder="admin' OR '1'='1">
-                </div>
-                
-                <div class="input-group">
-                    <label>비밀번호:</label>
-                    <input type="password" id="sqlPassword" placeholder="' OR '1'='1">
-                </div>
-                
-                <button class="btn" onclick="testSQLInjection()">로그인 테스트</button>
-                <div id="sqlResult" class="result"></div>
-            </div>
-
-            <!-- XSS Lab -->
-            <div class="lab-card">
-                <h3>🔗 XSS (Cross-Site Scripting) 테스트</h3>
-                <p>XSS 공격을 시뮬레이션하고 방어 방법을 학습합니다.</p>
-                
-                <div class="input-group">
-                    <label>댓글 입력:</label>
-                    <textarea id="xssInput" rows="3" placeholder="<script>alert('XSS 테스트')</script>"></textarea>
-                </div>
-                
-                <button class="btn" onclick="testXSS()">댓글 등록</button>
-                <div id="xssResult" class="result"></div>
-                <div id="xssOutput" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;"></div>
-            </div>
-
-            <!-- CSRF Lab -->
-            <div class="lab-card">
-                <h3>🔄 CSRF 테스트</h3>
-                <p>Cross-Site Request Forgery 공격을 시뮬레이션합니다.</p>
-                
-                <div class="input-group">
-                    <label>이체 금액:</label>
-                    <input type="number" id="transferAmount" placeholder="1000000">
-                </div>
-                
-                <div class="input-group">
-                    <label>받는 계좌:</label>
-                    <input type="text" id="transferAccount" placeholder="해커계좌-123">
-                </div>
-                
-                <button class="btn" onclick="testCSRF()">이체 실행 (위험!)</button>
-                <div id="csrfResult" class="result"></div>
-            </div>
-
-            <!-- Input Validation Lab -->
-            <div class="lab-card">
-                <h3>✅ 입력 검증 테스트</h3>
-                <p>다양한 입력 검증 우회 기법을 테스트합니다.</p>
-                
-                <div class="input-group">
-                    <label>파일 업로드:</label>
-                    <input type="text" id="fileName" placeholder="shell.php.jpg">
-                </div>
-                
-                <div class="input-group">
-                    <label>이메일:</label>
-                    <input type="text" id="emailInput" placeholder="test@example.com<script>">
-                </div>
-                
-                <button class="btn" onclick="testValidation()">검증 테스트</button>
-                <div id="validationResult" class="result"></div>
-            </div>
-        </div>
-
-        <div class="tab-container">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('logs')">보안 로그</button>
-                <button class="tab" onclick="switchTab('tips')">방어 기법</button>
-                <button class="tab" onclick="switchTab('tools')">보안 도구</button>
-            </div>
-            
-            <div class="tab-content">
-                <div class="tab-pane active" id="logs-pane">
-                    <div class="logs" id="securityLogs">
-                        [시작] 보안 테스트 환경이 초기화되었습니다...<br>
-                        [정보] 모든 테스트는 시뮬레이션이며 실제 데이터에 영향을 주지 않습니다.<br>
-                        [준비] 테스트를 시작하세요!<br>
+                <div class="nav-right" id="navRight">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="검색..." id="searchInput">
+                    </div>
+                    
+                    <div id="userSection">
+                        <button class="btn btn-primary" onclick="showAuthModal()">로그인</button>
                     </div>
                 </div>
-                
-                <div class="tab-pane" id="tips-pane">
-                    <h3>🛡️ 주요 방어 기법</h3>
-                    <ul style="margin-left: 20px; line-height: 2;">
-                        <li><strong>SQL Injection:</strong> 매개변수화된 쿼리, 입력 검증, ORM 사용</li>
-                        <li><strong>XSS:</strong> 출력 인코딩, CSP 헤더, 입력 필터링</li>
-                        <li><strong>CSRF:</strong> CSRF 토큰, SameSite 쿠키, Referer 검증</li>
-                        <li><strong>입력 검증:</strong> 화이트리스트 방식, 정규식 검증, 파일 타입 검사</li>
-                    </ul>
+
+                <button class="mobile-menu btn btn-ghost" onclick="toggleMobileMenu()">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div id="homeView">
+                <div class="hero">
+                    <h1>Modern Blog</h1>
+                    <p>모던하고 세련된 디자인의 개인 블로그입니다. 다양한 주제의 글을 공유하고 소통해보세요.</p>
+                </div>
+
+                <div class="posts-grid" id="postsGrid">
+                    <!-- 게시글들이 여기에 동적으로 추가됩니다 -->
+                </div>
+
+                <div class="empty-state hidden" id="emptyState">
+                    <p>아직 게시글이 없습니다.</p>
+                    <button class="btn btn-primary hidden" id="firstPostBtn" onclick="showPostModal()">첫 번째 글 작성하기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 인증 모달 -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="authTitle">로그인</h2>
+                <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+            </div>
+            
+            <form id="authForm">
+                <div class="form-group">
+                    <input type="text" placeholder="아이디" id="username" required>
+                </div>
+                <div class="form-group hidden" id="emailGroup">
+                    <input type="email" placeholder="이메일" id="email">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="비밀번호" id="password" required>
                 </div>
                 
-                <div class="tab-pane" id="tools-pane">
-                    <h3>🔧 추천 보안 도구</h3>
-                    <ul style="margin-left: 20px; line-height: 2;">
-                        <li><strong>OWASP ZAP:</strong> 웹 애플리케이션 보안 스캐너</li>
-                        <li><strong>Burp Suite:</strong> 웹 보안 테스트 플랫폼</li>
-                        <li><strong>Nmap:</strong> 네트워크 탐지 및 보안 감사</li>
-                        <li><strong>Wireshark:</strong> 네트워크 프로토콜 분석기</li>
-                    </ul>
-                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="authSubmitBtn">로그인</button>
+            </form>
+            
+            <div class="auth-switch">
+                <button type="button" onclick="toggleAuthMode()" id="authSwitchBtn">회원가입하기</button>
             </div>
         </div>
     </div>
 
-    <script>
-        let logCount = 0;
-
-        function addLog(message, type = 'info') {
-            const logs = document.getElementById('securityLogs');
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] [${type.toUpperCase()}] ${message}<br>`;
-            logs.innerHTML += logEntry;
-            logs.scrollTop = logs.scrollHeight;
-            logCount++;
-        }
-
-        function testSQLInjection() {
-            const userId = document.getElementById('sqlUserId').value;
-            const password = document.getElementById('sqlPassword').value;
-            const result = document.getElementById('sqlResult');
+    <!-- 게시글 작성/수정 모달 -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="postTitle">새 게시글</h2>
+                <button class="close-btn" onclick="closePostModal()">&times;</button>
+            </div>
             
-            addLog(`SQL 인젝션 테스트 시도: ${userId}`, 'test');
-            
-            // 시뮬레이션된 SQL 인젝션 검사
-            const sqlPatterns = [
-                /'/gi, /or\s+/gi, /union\s+/gi, /select\s+/gi, 
-                /drop\s+/gi, /insert\s+/gi, /update\s+/gi, /delete\s+/gi
-            ];
-            
-            let isVulnerable = false;
-            let detectedPatterns = [];
-            
-            const fullInput = userId + ' ' + password;
-            sqlPatterns.forEach((pattern, index) => {
-                if (pattern.test(fullInput)) {
-                    isVulnerable = true;
-                    detectedPatterns.push(['Single Quote', 'OR Statement', 'UNION Attack', 'SELECT Query', 'DROP Command', 'INSERT Command', 'UPDATE Command', 'DELETE Command'][index]);
-                }
-            });
-            
-            result.style.display = 'block';
-            if (isVulnerable) {
-                result.className = 'result vulnerability';
-                result.innerHTML = `
-                    <strong>⚠️ SQL 인젝션 취약점 발견!</strong><br>
-                    감지된 패턴: ${detectedPatterns.join(', ')}<br>
-                    <em>실제 환경에서는 데이터베이스가 손상될 수 있습니다.</em>
-                `;
-                addLog(`SQL 인젝션 취약점 감지: ${detectedPatterns.join(', ')}`, 'vulnerability');
-            } else {
-                result.className = 'result';
-                result.innerHTML = `
-                    <strong>✅ 안전한 입력</strong><br>
-                    SQL 인젝션 패턴이 감지되지 않았습니다.
-                `;
-                addLog('SQL 인젝션 테스트 통과', 'safe');
-            }
-        }
-
-        function testXSS() {
-            const input = document.getElementById('xssInput').value;
-            const result = document.getElementById('xssResult');
-            const output = document.getElementById('xssOutput');
-            
-            addLog(`XSS 테스트 시도: ${input.substring(0, 50)}...`, 'test');
-            
-            // XSS 패턴 검사
-            const xssPatterns = [
-                /<script/gi, /<iframe/gi, /javascript:/gi, /onload=/gi,
-                /onerror=/gi, /onclick=/gi, /onmouseover=/gi, /<img/gi
-            ];
-            
-            let isXSS = false;
-            let detectedPatterns = [];
-            
-            xssPatterns.forEach((pattern, index) => {
-                if (pattern.test(input)) {
-                    isXSS = true;
-                    detectedPatterns.push(['Script Tag', 'IFrame', 'JavaScript Protocol', 'OnLoad Event', 'OnError Event', 'OnClick Event', 'OnMouseOver Event', 'Image Tag'][index]);
-                }
-            });
-            
-            result.style.display = 'block';
-            if (isXSS) {
-                result.className = 'result vulnerability';
-                result.innerHTML = `
-                    <strong>⚠️ XSS 공격 패턴 발견!</strong><br>
-                    감지된 패턴: ${detectedPatterns.join(', ')}<br>
-                    <em>실제 환경에서는 사용자 세션이 탈취될 수 있습니다.</em>
-                `;
-                addLog(`XSS 취약점 감지: ${detectedPatterns.join(', ')}`, 'vulnerability');
+            <form id="postForm">
+                <div class="form-group">
+                    <input type="text" placeholder="제목" id="postTitleInput" required>
+                </div>
+                <div class="form-group">
+                    <select id="postCategory">
+                        <option value="일반">일반</option>
+                        <option value="개발">개발</option>
+                        <option value="디자인">디자인</option>
+                        <option value="일상">일상</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="내용을 입력하세요..." id="postContent" required></textarea>
+                </div>
                 
-                // 안전하게 HTML 인코딩하여 표시
-                output.innerHTML = `<strong>입력된 내용 (HTML 인코딩됨):</strong><br><code>${input.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`;
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="postSubmitBtn">작성하기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let currentUser = null;
+        let users = [];
+        let posts = [
+            {
+                id: 1,
+                title: "모던 웹 디자인의 트렌드",
+                content: "2024년 웹 디자인 트렌드를 살펴보면 미니멀리즘과 기능성이 더욱 중요해지고 있습니다. 사용자 경험을 중심으로 한 디자인이 주목받고 있으며, 깔끔하고 직관적인 인터페이스가 선호되고 있습니다.",
+                author: "디자이너김",
+                date: "2024-12-15",
+                views: 234,
+                category: "디자인"
+            },
+            {
+                id: 2,
+                title: "React 성능 최적화 팁",
+                content: "React 애플리케이션의 성능을 향상시키는 방법들을 소개합니다. useMemo, useCallback을 활용한 최적화부터 코드 스플리팅까지 다양한 기법들을 실제 예제와 함께 알아보겠습니다.",
+                author: "개발자박",
+                date: "2024-12-14",
+                views: 156,
+                category: "개발"
+            }
+        ];
+        let comments = {
+            1: [
+                { id: 1, author: "독자A", content: "정말 유용한 정보네요!", date: "2024-12-15" }
+            ]
+        };
+        let likes = {
+            1: ["독자A", "독자B"],
+            2: ["독자C"]
+        };
+        let authMode = 'login';
+        let editingPost = null;
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPosts();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // 검색
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredPosts = posts.filter(post => 
+                    post.title.toLowerCase().includes(searchTerm) ||
+                    post.content.toLowerCase().includes(searchTerm)
+                );
+                renderPosts(filteredPosts);
+            });
+
+            // 폼 제출
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('postForm').addEventListener('submit', handlePostSubmit);
+        }
+
+        function renderPosts(postsToRender = posts) {
+            const postsGrid = document.getElementById('postsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (postsToRender.length === 0) {
+                postsGrid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                if (currentUser) {
+                    document.getElementById('firstPostBtn').classList.remove('hidden');
+                }
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            
+            postsGrid.innerHTML = postsToRender.map(post => `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-author">
+                            <div class="avatar">${post.author.charAt(0)}</div>
+                            <div>
+                                <div style="font-weight: 500;">${post.author}</div>
+                                <div class="post-meta">${post.date} • 조회 ${post.views}</div>
+                            </div>
+                        </div>
+                        <div class="post-category">${post.category}</div>
+                    </div>
+                    
+                    <h3 class="post-title" onclick="viewPost(${post.id})">${post.title}</h3>
+                    <p class="post-content">${post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content}</p>
+                    
+                    <div class="post-actions">
+                        <div class="post-stats">
+                            <button class="stat-btn ${(likes[post.id] || []).includes(currentUser?.username) ? 'liked' : ''}" 
+                                    onclick="toggleLike(${post.id})">
+                                ❤️ ${(likes[post.id] || []).length}
+                            </button>
+                            <button class="stat-btn" onclick="toggleComments(${post.id})">
+                                💬 ${(comments[post.id] || []).length}
+                            </button>
+                        </div>
+                        ${currentUser?.username === post.author ? `<button class="btn btn-ghost" onclick="editPost(${post.id})">수정</button>` : ''}
+                    </div>
+                    
+                    <div class="comments-section hidden" id="comments-${post.id}">
+                        <div id="comments-list-${post.id}">
+                            ${(comments[post.id] || []).map(comment => `
+                                <div class="comment">
+                                    <div class="avatar">${comment.author.charAt(0)}</div>
+                                    <div class="comment-content">
+                                        <div class="comment-author">${comment.author}</div>
+                                        <div class="comment-text">${comment.content}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${currentUser ? `
+                            <div class="comment-input">
+                                <input type="text" placeholder="댓글을 입력하세요..." id="comment-input-${post.id}"
+                                       onkeypress="if(event.key==='Enter') addComment(${post.id})">
+                                <button class="btn btn-primary" onclick="addComment(${post.id})">등록</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateUserSection() {
+            const userSection = document.getElementById('userSection');
+            
+            if (currentUser) {
+                userSection.innerHTML = `
+                    <button class="btn btn-primary" onclick="showPostModal()">✏️ 글쓰기</button>
+                    <div class="user-info">
+                        <div class="avatar">${currentUser.username.charAt(0)}</div>
+                        <span>${currentUser.username}</span>
+                    </div>
+                    <button class="btn btn-ghost" onclick="logout()">로그아웃</button>
+                `;
             } else {
-                result.className = 'result';
-                result.innerHTML = `
-                    <strong>✅ 안전한 입력</strong><br>
-                    XSS 공격 패턴이 감지되지 않았습니다.
+                userSection.innerHTML = `
+                    <button class="btn btn-primary" onclick="showAuthModal()">로그인</button>
                 `;
-                addLog('XSS 테스트 통과', 'safe');
-                output.innerHTML = `<strong>등록된 댓글:</strong><br>${input}`;
             }
         }
 
-        function testCSRF() {
-            const amount = document.getElementById('transferAmount').value;
-            const account = document.getElementById('transferAccount').value;
-            const result = document.getElementById('csrfResult');
-            
-            addLog(`CSRF 테스트: ${amount}원을 ${account}로 이체 시도`, 'test');
-            
-            // CSRF 토큰 검사 시뮬레이션
-            const hasCSRFToken = Math.random() > 0.7; // 30% 확률로 CSRF 토큰 존재
-            
-            result.style.display = 'block';
-            if (!hasCSRFToken) {
-                result.className = 'result vulnerability';
-                result.innerHTML = `
-                    <strong>⚠️ CSRF 공격 성공!</strong><br>
-                    CSRF 토큰이 없어 악의적인 요청이 실행되었습니다.<br>
-                    <em>${amount}원이 ${account}로 이체되었습니다! (시뮬레이션)</em>
-                `;
-                addLog(`CSRF 취약점 - 무단 이체 실행: ${amount}원`, 'vulnerability');
+        // 인증 관련 함수들
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('authForm').reset();
+        }
+
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            const authTitle = document.getElementById('authTitle');
+            const emailGroup = document.getElementById('emailGroup');
+            const authSubmitBtn = document.getElementById('authSubmitBtn');
+            const authSwitchBtn = document.getElementById('authSwitchBtn');
+
+            if (authMode === 'signup') {
+                authTitle.textContent = '회원가입';
+                emailGroup.classList.remove('hidden');
+                authSubmitBtn.textContent = '회원가입';
+                authSwitchBtn.textContent = '로그인하기';
             } else {
-                result.className = 'result';
-                result.innerHTML = `
-                    <strong>✅ CSRF 방어 성공</strong><br>
-                    CSRF 토큰 검증으로 악의적인 요청이 차단되었습니다.
-                `;
-                addLog('CSRF 방어 성공 - 토큰 검증 통과', 'safe');
+                authTitle.textContent = '로그인';
+                emailGroup.classList.add('hidden');
+                authSubmitBtn.textContent = '로그인';
+                authSwitchBtn.textContent = '회원가입하기';
             }
         }
 
-        function testValidation() {
-            const fileName = document.getElementById('fileName').value;
-            const email = document.getElementById('emailInput').value;
-            const result = document.getElementById('validationResult');
-            
-            addLog(`입력 검증 테스트: 파일명=${fileName}, 이메일=${email}`, 'test');
-            
-            let issues = [];
-            
-            // 파일 확장자 우회 검사
-            if (fileName.includes('.php') || fileName.includes('.jsp') || fileName.includes('.asp')) {
-                issues.push('위험한 파일 확장자 감지');
-            }
-            
-            if (fileName.includes('..') || fileName.includes('/')) {
-                issues.push('경로 조작 시도 감지');
-            }
-            
-            // 이메일 XSS 검사
-            if (email.includes('<') || email.includes('>') || email.includes('script')) {
-                issues.push('이메일 필드에서 XSS 패턴 감지');
-            }
-            
-            result.style.display = 'block';
-            if (issues.length > 0) {
-                result.className = 'result vulnerability';
-                result.innerHTML = `
-                    <strong>⚠️ 입력 검증 취약점 발견!</strong><br>
-                    ${issues.map(issue => `• ${issue}`).join('<br>')}<br>
-                    <em>적절한 입력 검증이 필요합니다.</em>
-                `;
-                addLog(`입력 검증 실패: ${issues.join(', ')}`, 'vulnerability');
+        function handleAuth(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (authMode === 'signup') {
+                const newUser = {
+                    id: Date.now(),
+                    username: username,
+                    email: email,
+                    password: password,
+                    joinDate: new Date().toISOString().split('T')[0]
+                };
+                users.push(newUser);
+                currentUser = newUser;
             } else {
-                result.className = 'result';
-                result.innerHTML = `
-                    <strong>✅ 입력 검증 통과</strong><br>
-                    모든 입력이 안전합니다.
-                `;
-                addLog('입력 검증 통과', 'safe');
+                const user = users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    currentUser = user;
+                } else {
+                    alert('아이디 또는 비밀번호가 잘못되었습니다.');
+                    return;
+                }
+            }
+
+            updateUserSection();
+            closeAuthModal();
+            renderPosts();
+        }
+
+        function logout() {
+            currentUser = null;
+            updateUserSection();
+            renderPosts();
+        }
+
+        // 게시글 관련 함수들
+        function showPostModal() {
+            if (!currentUser) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            document.getElementById('postModal').classList.add('active');
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').classList.remove('active');
+            document.getElementById('postForm').reset();
+            editingPost = null;
+            document.getElementById('postTitle').textContent = '새 게시글';
+            document.getElementById('postSubmitBtn').textContent = '작성하기';
+        }
+
+        function editPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            editingPost = post;
+            document.getElementById('postTitleInput').value = post.title;
+            document.getElementById('postCategory').value = post.category;
+            document.getElementById('postContent').value = post.content;
+            document.getElementById('postTitle').textContent = '게시글 수정';
+            document.getElementById('postSubmitBtn').textContent = '수정하기';
+            
+            showPostModal();
+        }
+
+        function handlePostSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('postTitleInput').value;
+            const category = document.getElementById('postCategory').value;
+            const content = document.getElementById('postContent').value;
+
+            if (editingPost) {
+                editingPost.title = title;
+                editingPost.category = category;
+                editingPost.content = content;
+            } else {
+                const newPost = {
+                    id: Date.now(),
+                    title: title,
+                    content: content,
+                    category: category,
+                    author: currentUser.username,
+                    date: new Date().toISOString().split('T')[0],
+                    views: 0
+                };
+                posts.unshift(newPost);
+            }
+
+            renderPosts();
+            closePostModal();
+        }
+
+        function viewPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.views++;
+                renderPosts();
             }
         }
 
-        function switchTab(tabName) {
-            // 모든 탭과 내용 숨기기
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            
-            // 선택된 탭 활성화
-            event.target.classList.add('active');
-            document.getElementById(tabName + '-pane').classList.add('active');
+        // 좋아요 및 댓글 관련 함수들
+        function toggleLike(postId) {
+            if (!currentUser) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            if (!likes[postId]) {
+                likes[postId] = [];
+            }
+
+            const userLikes = likes[postId];
+            const userIndex = userLikes.indexOf(currentUser.username);
+
+            if (userIndex > -1) {
+                userLikes.splice(userIndex, 1);
+            } else {
+                userLikes.push(currentUser.username);
+            }
+
+            renderPosts();
         }
 
-        // 초기화 시 환영 메시지
-        setTimeout(() => {
-            addLog('보안 테스트 환경 준비 완료!', 'info');
-            addLog('각 테스트를 통해 웹 애플리케이션 보안을 학습하세요', 'info');
-        }, 1000);
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.classList.toggle('hidden');
+        }
+
+        function addComment(postId) {
+            if (!currentUser) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+            
+            if (!content) return;
+
+            if (!comments[postId]) {
+                comments[postId] = [];
+            }
+
+            const newComment = {
+                id: Date.now(),
+                author: currentUser.username,
+                content: content,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            comments[postId].push(newComment);
+            input.value = '';
+            renderPosts();
+        }
+
+        function showHome() {
+            document.getElementById('homeView').classList.remove('hidden');
+        }
+
+        function toggleMobileMenu() {
+            // 모바일 메뉴 구현 (필요시 추가)
+        }
     </script>
 </body>
 </html>
